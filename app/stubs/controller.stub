@@ -1,0 +1,94 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Models\Dummy;
+use App\Http\QueryFilters\DummyFilter;
+use App\Http\Requests\DummyStoreRequest;
+use App\Http\Requests\DummyUpdateRequest;
+
+class DummyController extends Controller
+{
+    /**
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Dummy::class, 'dummy');
+    }
+
+    /**
+     * @param \App\Http\QueryFilters\DummyFilter $filter
+     * @param \App\Models\Dummy                  $dummy
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function index(DummyFilter $filter, Dummy $dummy)
+    {
+        $dummies = $this->paginated($dummy, $filter);
+
+        return view('admin.dummies.index', compact('dummies'));
+    }
+
+    /**
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
+     */
+    public function create()
+    {
+        return view('admin.dummies.create', ['dummy' => new Dummy]);
+    }
+
+    /**
+     * @param DummyStoreRequest $request
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function store(DummyStoreRequest $request)
+    {
+        $dummy = Dummy::create($request->all());
+
+        flash()->success('Dummy created');
+
+        return redirect(route('admin.dummies.edit', $dummy));
+    }
+
+    /**
+     * @param Dummy $dummy
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function edit(Dummy $dummy)
+    {
+        return view('admin.dummies.edit', compact('dummy'));
+    }
+
+    /**
+     * @param DummyUpdateRequest $request
+     * @param Dummy              $dummy
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function update(DummyUpdateRequest $request, Dummy $dummy)
+    {
+        $dummy->update($request->all());
+
+        flash()->success('Dummy updated');
+
+        return back();
+    }
+
+    /**
+     * @param Dummy $dummy
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
+     */
+    public function destroy(Dummy $dummy)
+    {
+        $dummy->delete();
+
+        flash()->success('Dummy deleted');
+
+        return redirect(route('admin.dummies.index'));
+    }
+}

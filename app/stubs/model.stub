@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Models;
+
+class Dummy extends Model
+{
+    /**
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+    ];
+}

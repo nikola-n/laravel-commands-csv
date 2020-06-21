@@ -1,0 +1,119 @@
+<?php
+
+namespace App\Models;
+
+use Novatio\Admin\Traits\Uuidable;
+use Novatio\Admin\Models\Page\Data;
+use Novatio\Admin\Traits\Filterable;
+use Novatio\Admin\Traits\NormalizeDates;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Model as Eloquent;
+
+/**
+ * Class Model
+ */
+abstract class Model extends Eloquent
+{
+    use Filterable, SoftDeletes, Uuidable, NormalizeDates;
+
+    /**
+     * @var array
+     */
+    protected $toggable = [];
+
+    /**
+     * @param array $attributes
+     */
+    public function __construct(array $attributes = [])
+    {
+        $this->fillable[] = 'data';
+
+        // todo make this nicer
+        // we need this to make sure we don't show these data across models when used in api reponses.
+        $this->hidden[] = 'created_at';
+        $this->hidden[] = 'updated_at';
+        $this->hidden[] = 'deleted_at';
+
+        parent::__construct($attributes);
+    }
+
+    /**
+     * @param null $value
+     *
+     * @return mixed|string
+     */
+    public function getTitleAttribute($value = null)
+    {
+        if (method_exists($this, 'isTranslatableAttribute') && $this->isTranslatableAttribute('title')) {
+            return $value;
+        }
+
+        if ($title = $this->getAttributeFromArray('title')) {
+            return $title;
+        }
+
+        if ($this->id) {
+            return $this->name ?: '#' . $this->id;
+        }
+    }
+
+    /**
+     * @param $value
+     */
+    public function setDataAttribute($value)
+    {
+        $this->attributes['data'] = is_string($value) ? $value : json_encode((array)$value + (array)$this->data->attributesToArray());
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDataAttribute()
+    {
+        return new Data(json_decode($this->attributes['data'] ?? null, true));
+    }
+
+    /**
+     * @return void
+     */
+    public function resetDates()
+    {
+        foreach ($this->getDates() as $date) {
+            $this->$date = null;
+        }
+    }
+
+    /**
+     * @param $field
+     *
+     * @return mixed
+     */
+    public function toggleField($field)
+    {
+        if (in_array($field, $this->toggable)) {
+
+            $this->$field = (bool)$this->$field ? 0 : 1;
+            $this->save();
+
+            return $this->$field;
+        }
+    }
+
+    /**
+     * @param  string $key
+     *
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        $value = parent::__get($key);
+
+        if ($value === null) {
+            if ( ! array_key_exists($key, $this->attributes) && isset($this->data)) {
+                $value = optional($this->data)->$key;
+            }
+        }
+
+        return $value;
+    }
+}

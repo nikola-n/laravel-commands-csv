@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Http\QueryFilters;
+
+use Illuminate\Database\Eloquent\Builder;
+use Novatio\Admin\Http\QueryFilters\QueryFilter;
+
+class DummyFilter extends QueryFilter
+{
+    /**
+     * @var array
+     */
+    protected $sortable_columns = [
+        'id',
+        'name',
+    ];
+
+    /**
+     * @param $values
+     *
+     * @return Builder
+     */
+    public function q($values)
+    {
+        if ( is_numeric($values) ) {
+            // search by id
+            return $this->builder->where('id', $values);
+        }
+
+        if ( strlen($values) < 3 ) {
+            // search by string if it is long enough
+            return $this->builder;
+        }
+
+        return $this->builder->where(function (Builder $query) use ($values) {
+            $query->where('name', 'like', '%' . $values . '%');
+        });
+    }
+}

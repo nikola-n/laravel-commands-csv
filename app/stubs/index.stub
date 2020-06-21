@@ -1,0 +1,50 @@
+@extends('admin::_layouts.base')
+
+@section('title', 'Dummies')
+
+@section('tablefilter')
+    {{-- form fields here --}}
+@endsection
+
+@section('content')
+
+    <div class="card">
+        <div class="card-header">
+            <div class="header-elements-inline">
+
+                @include('admin::_includes.filter')
+
+                <div class="header-elements">
+                    <div class="list-icons">
+                        @can('create-dummy')
+                        <a href="{{ route('admin.dummies.create') }}" class="btn bg-blue"><i class="fa fa-plus"></i> Add Dummy</a>
+                        @endcan
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+
+                @foreach($dummies as $dummy)
+                <tr>
+                    <td>{{ $dummy->name }}</td>
+                    <td>@include('admin::_includes.index_actions_authorized', ['model' => $dummy])</td>
+                </tr>
+                @endforeach
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    @include('admin::._includes.paginator', ['items' => $dummies])
+@endsection

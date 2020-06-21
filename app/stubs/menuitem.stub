@@ -1,0 +1,7 @@
+
+<li class="nav-item">
+    <a href="{{ route('admin.dummies.index') }}" class="nav-link {{ request()->routeIs('admin.dummies*') ? 'active' : '' }}">
+        <i class="icon-cog6"></i>
+        <span>Dummies</span>
+    </a>
+</li>
