@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Acme\Transformers\ProductTransformer;
 use App\Product;
 use Illuminate\Http\Request;
-use Symfony\Component\Console\Input\Input;
+use Illuminate\Pagination\Paginator;
 
 class ProductController extends ApiController
 {
@@ -17,7 +17,7 @@ class ProductController extends ApiController
     public function __construct(ProductTransformer $productTransformer)
     {
         $this->productTransformer = $productTransformer;
-        $this->middleware('auth.basic',['only' => 'post']);
+        $this->middleware('auth.basic', ['only' => 'post']);
 
     }
 
@@ -28,21 +28,12 @@ class ProductController extends ApiController
      */
     public function index()
     {
-        $products = Product::all();
-
-        return $this->respond([
+        $limit    = request()->get('limit') ?: 3;
+        $products = Product::paginate($limit);
+        //dd(get_class_methods($products));
+        return $this->respondsWithPagination($products, [
             'data' => $this->productTransformer->transformCollection($products->all()),
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -59,7 +50,7 @@ class ProductController extends ApiController
                 ->respondWithError('Parameters failed validation for product');
         }
         Product::create($request->all());
-       return $this->respondCreated('Product successfully created');
+        return $this->respondCreated('Product successfully created');
     }
 
     /**
@@ -78,42 +69,4 @@ class ProductController extends ApiController
 
         return $this->respond(['data' => $this->productTransformer->transform($product)]);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int                      $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
 }

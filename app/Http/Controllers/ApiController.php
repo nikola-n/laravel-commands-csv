@@ -2,10 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Response as IlluminateResponse;
 
 class ApiController extends Controller
 {
+
+    /**
+     * @param $products
+     *
+     * @param $data
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function respondsWithPagination(Paginator $products, $data): \Illuminate\Http\JsonResponse
+    {
+        $data = array_merge($data, [
+            'paginator' => [
+                'total_count'  => $products->total(),
+                'total_pages'  => ceil($products->total() / $products->perPage()),
+                'current_page' => $products->currentPage(),
+                'limit'        => $products->perPage(),
+            ],
+        ]);
+        return $this->respond($data);
+    }
 
     const HTTP_NOT_FOUND = 404;
 
@@ -40,7 +61,6 @@ class ApiController extends Controller
     {
         return $this->setStatusCode(IlluminateResponse::HTTP_INTERNAL_SERVER_ERROR)->respondWithError($message);
     }
-
     /**
      * @param string $message
      *
@@ -50,6 +70,7 @@ class ApiController extends Controller
     {
         return $this->setStatusCode(self::HTTP_NOT_FOUND)->respondWithError($message);
     }
+
     /**
      * @param string $message
      *

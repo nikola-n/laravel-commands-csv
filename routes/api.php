@@ -18,4 +18,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::get('leagues', 'FootballController@index');
+Route::group(['prefix' => 'v1'], function () {
+    Route::get('products/{id}/tags', 'TagController@index');
+    Route::resource('products', \ProductController::class);
+    Route::resource('tags', \TagController::class, ['only' => ['index', 'show']]);
+});

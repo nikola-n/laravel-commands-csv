@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\ExternalApiCommands;
 
 use App\Services\GitHubService;
 use Illuminate\Console\Command;
-use phpDocumentor\Reflection\Types\Parent_;
 
 class ShowCommitsCommand extends Command
 {

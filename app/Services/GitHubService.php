@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Http\Clients\GitHubClient;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
 
 class GitHubService
 {

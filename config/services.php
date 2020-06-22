@@ -31,10 +31,13 @@ return [
     ],
 
     'clients' => [
-        'key' => env('FOOTBALL_KEY')
+        'key' => env('FOOTBALL_API_TOKEN')
     ],
     'news' => [
         'key' => env('NEWS_API_KEY')
+    ],
+    'github' => [
+        'key' => env('GITHUB_API_KEY')
     ]
 
 ];
