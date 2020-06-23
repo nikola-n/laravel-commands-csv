@@ -39,6 +39,8 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->hasMany(Role::class);
+        return $this->belongsTo(Role::class, 'role_id');
     }
+
+    //you can override the toArray() method here if that's what you need
 }

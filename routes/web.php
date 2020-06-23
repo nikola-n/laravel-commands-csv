@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Resources\UserCollection;
+use App\Http\Resources\UserResource;
+use App\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +20,26 @@ extension_loaded('redis');
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/resource', function () {
+    //eager loaded it to avoid N+1 query problem
+    //$user = User::with('roles')->find(1);
+    //return new UserResource($user);
+
+    //if we have collection
+    $user = User::with('roles')->paginate(1);
+    //return new UserResource($user);
+    return UserResource::collection($user);
+});
+
+Route::get('/collection', function () {
+
+    $user = User::with('roles')->paginate(1);
+
+    return new UserCollection($user);
+});
+
+
 Route::get('import', 'BusinessController@create')->name('business.create');
 Route::post('import', 'BusinessController@store')->name('business.store');
 

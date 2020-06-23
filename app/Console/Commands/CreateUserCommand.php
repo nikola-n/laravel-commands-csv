@@ -21,7 +21,7 @@ class CreateUserCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Create new user';
 
     /**
      * Create a new command instance.
@@ -44,15 +44,18 @@ class CreateUserCommand extends Command
         $email    = $this->ask('Enter your Email');
         $password = $this->secret('Password?');
 
-        $roles = new Role();
-        if(! $roles->exists) {
+        //check if the roles table is populated
+        $roles = Role::where('name' ,'=' , 'admin')->exists();
+        if ( ! $roles) {
             $this->warn('Create Roles first with create:role command');
+            exit();
         }
+
         $roles = Role::all()->pluck('name')->toArray();
-        $role = $this->choice('Your Role?', $roles);
-        if ($role == 'admin') {
+        $role  = $this->choice('Your Role?', $roles);
+        if ($role == 'Admin') {
             $role_id = 1;
-        } else if ($role == 'dev') {
+        } else if ($role == 'Developer') {
             $role_id = 2;
         } else {
             $role_id = 3;
@@ -79,7 +82,7 @@ class CreateUserCommand extends Command
                 'role_id'  => $tableStringRole[0],
             ],
         ];
-        $headers = ['First Name', 'Email', 'Password', 'Role'];
+        $headers         = ['First Name', 'Email', 'Password', 'Role'];
         $this->table($headers, $displayUser);
     }
 }
