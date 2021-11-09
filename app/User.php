@@ -16,7 +16,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','role_id',
+        'name',
+        'email',
+        'password',
+        'role_id',
     ];
 
     /**
@@ -25,7 +28,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     /**
@@ -40,6 +44,17 @@ class User extends Authenticatable
     public function roles()
     {
         return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        if ($this->roles->name === 'Admin') {
+            return true;
+        }
+        return false;
     }
 
     //you can override the toArray() method here if that's what you need

@@ -32,6 +32,9 @@ Route::get('/resource', function () {
     return UserResource::collection($user);
 });
 
+//If you paginate the results you can't change the 'data' key even if you
+//call withoutWrapping method in the AppServiceProvider
+//Paginated responses always contain meta and links keys with information about the paginator's state
 Route::get('/collection', function () {
 
     $user = User::with('roles')->paginate(1);
