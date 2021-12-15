@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Redis;
 
 class ProcessCsvUpload implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
 
     /**
      * @var string
@@ -65,5 +65,8 @@ class ProcessCsvUpload implements ShouldQueue
             return $this->release(5);
         });
 
+        if($this->batch()->canceled()){
+            return;
+        }
     }
 }

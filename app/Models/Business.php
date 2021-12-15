@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\Jobs\ProcessCsvUpload;
 use Illuminate\Database\Eloquent\Model;
