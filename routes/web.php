@@ -2,6 +2,8 @@
 
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
+use App\Jobs\ProcessCsvUpload;
+use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
